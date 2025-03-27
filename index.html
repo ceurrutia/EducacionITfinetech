@@ -1,147 +1,161 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fintech App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #ffffff;
-            color: #111111;
-        }
-        .container {
-            max-width: 400px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #bdbdbd;
-            color:aliceblue;
-            padding: 30px;
-            border-radius: 20px;
-            background-color: rgb(27, 104, 128);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fintech App</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
 </head>
+
 <body>
-    <div class="container">
-        <img src="flat.png" alt="logo" width="70" />
-        <h1 class="text-center">Billetera Virtual</h1>
-        
-        <div id="alertContainer"></div>
-        
-        <div id="loginForm">
-            <h4>Inicio de sesión</h4>
-            <input type="email" id="loginEmail" class="form-control my-2" placeholder="Email">
-            <input type="password" id="loginContraseña" class="form-control my-2" placeholder="Contraseña">
-            <button class="btn btn-primary w-100" onclick="handleLogin()">Ingresar</button>
-        </div>
-        
-        <div id="registerForm" class="mt-4">
-            <h4>Registro de nuevo usuario</h4>
-            <input type="text" id="registerNombre" class="form-control my-2" placeholder="Nombre">
-            <input type="email" id="registerEmail" class="form-control my-2" placeholder="Email">
-            <input type="password" id="registerContraseña" class="form-control my-2" placeholder="Contraseña">
-            <button class="btn btn-success w-100" onclick="handleRegister()">Registrar</button>
-        </div>
+  <div class="container">
+    <img src="img/flat.png" alt="logo" width="70" />
+    <h1 class="text-center">Billetera Virtual</h1>
+
+    <div id="alertContainer"></div>
+
+    <div id="loginForm">
+      <h4>Inicio de sesión</h4>
+      <input type="email" id="loginEmail" class="form-control my-2" placeholder="Email" />
+      <input type="password" id="loginContraseña" class="form-control my-2" placeholder="Contraseña" />
+      <button class="btn btn-primary w-100" onclick="handleLogin()">
+        Ingresar
+      </button>
     </div>
-    
-    <script>
-        class Usuario {
-            constructor(nombre, email, contraseña, saldo = 0) {
-                this.nombre = nombre;
-                this.email = email;
-                this.contraseña = contraseña;
-                this.saldo = saldo;
-                this.movimientos = [];
-            }
 
-            ingresarDinero(monto) {
-                if (monto > 0) {
-                    this.saldo += monto;
-                    this.movimientos.push(`Ingreso: +$${monto}`);
-                    return `Has ingresado $${monto}. Saldo actual: $${this.saldo}`;
-                }
-                return "Monto inválido";
-            }
+    <div id="registerForm" class="mt-4">
+      <h4>Registro de nuevo usuario</h4>
+      <input type="text" id="registerNombre" class="form-control my-2" placeholder="Nombre" />
+      <input type="email" id="registerEmail" class="form-control my-2" placeholder="Email" />
+      <input type="password" id="registerContraseña" class="form-control my-2" placeholder="Contraseña" />
+      <button class="btn btn-success w-100" onclick="handleRegister()">
+        Registrar
+      </button>
+    </div>
+  </div>
 
-            transferirDinero(monto, destinatario) {
-                if (monto > 0 && this.saldo >= monto) {
-                    this.saldo -= monto;
-                    destinatario.saldo += monto;
-                    this.movimientos.push(`Transferencia: -$${monto} a ${destinatario.email}`);
-                    destinatario.movimientos.push(`Transferencia: +$${monto} de ${this.email}`);
-                    return `Has transferido $${monto} a ${destinatario.email}`;
-                }
-                return "Fondos insuficientes o monto inválido";
-            }
+  <script>
+    class Usuario {
+      constructor(nombre, email, contraseña, saldo = 0) {
+        this.nombre = nombre;
+        this.email = email;
+        this.contraseña = contraseña;
+        this.saldo = saldo;
+        this.movimientos = [];
+      }
 
-            verMovimientos() {
-                return this.movimientos.length > 0 ? this.movimientos : "No hay movimientos";
-            }
+      ingresarDinero(monto) {
+        if (monto > 0) {
+          this.saldo += monto;
+          this.movimientos.push(`Ingreso: +$${monto}`);
+          return `Has ingresado $${monto}. Saldo actual: $${this.saldo}`;
         }
+        return "Monto inválido";
+      }
 
-        const usuarios = [];
-
-        function mostrarAlerta(mensaje, tipo) {
-            document.getElementById("alertContainer").innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-                ${mensaje}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`;
+      transferirDinero(monto, destinatario) {
+        if (monto > 0 && this.saldo >= monto) {
+          this.saldo -= monto;
+          destinatario.saldo += monto;
+          this.movimientos.push(
+            `Transferencia: -$${monto} a ${destinatario.email}`
+          );
+          destinatario.movimientos.push(
+            `Transferencia: +$${monto} de ${this.email}`
+          );
+          return `Has transferido $${monto} a ${destinatario.email}`;
         }
+        return "Fondos insuficientes o monto inválido";
+      }
 
-        function handleRegister() {
-            const nombre = document.getElementById("registerNombre").value;
-            const email = document.getElementById("registerEmail").value;
-            const contraseña = document.getElementById("registerContraseña").value;
-            const resultado = registrarUsuario(nombre, email, contraseña);
-            mostrarAlerta(resultado, resultado === "Registro exitoso" ? "success" : "danger");
-        }
+      verMovimientos() {
+        return this.movimientos.length > 0
+          ? this.movimientos
+          : "No hay movimientos";
+      }
+    }
 
-        function handleLogin() {
-            const email = document.getElementById("loginEmail").value;
-            const contraseña = document.getElementById("loginContraseña").value;
-            const user = login(email, contraseña);
-            if (typeof user === "object") {
-                sessionStorage.setItem("usuario", JSON.stringify(user));
-                window.location.href = "transacciones.html";
-            } else {
-                mostrarAlerta(user, "danger");
-            }
-            
-        }
+    const usuarios = [];
 
-        function registrarUsuario(nombre, email, contraseña) {
-            if (!email) {
-                return "El email no puede estar vacío";
-            }
-            if (!contraseña) {
-                return "La contraseña no puede estar vacía";
-            }
-            if (contraseña.length < 8 ||
-                !/[A-Z]/.test(contraseña) ||
-                !/[0-9]/.test(contraseña) ||
-                !/[^A-Za-z0-9]/.test(contraseña)) {
-                return "La contraseña debe tener al menos 8 caracteres y contener una mayúscula, un número y un carácter especial";
-            }
-            if (usuarios.some(u => u.email === email)) {
-                return "El email ya está registrado";
-            }
-            const nuevoUsuario = new Usuario(nombre, email, contraseña);
-            usuarios.push(nuevoUsuario);
-            return "Registro exitoso";
-        }
+    function mostrarAlerta(mensaje, tipo) {
+      document.getElementById(
+        "alertContainer"
+      ).innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>`;
+    }
 
-        function login(email, contraseña) {
-            if (!email) {
-                return "El email no puede estar vacío";
-            }
-            if (!contraseña) {
-                return "La contraseña no puede estar vacía";
-            }
-            const user = usuarios.find(u => u.email === email && u.contraseña === contraseña);
-            return user ? user : "Email o contraseña incorrectos";
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    function handleRegister() {
+      const nombre = document.getElementById("registerNombre").value;
+      const email = document.getElementById("registerEmail").value;
+      const contraseña = document.getElementById("registerContraseña").value;
+      const resultado = registrarUsuario(nombre, email, contraseña);
+      mostrarAlerta(
+        resultado,
+        resultado === "Registro exitoso" ? "success" : "danger"
+      );
+      // Limpiar los campos de registro
+      document.getElementById("registerNombre").value = "";
+      document.getElementById("registerEmail").value = "";
+      document.getElementById("registerContraseña").value = "";
+    }
+
+    function handleLogin() {
+      const email = document.getElementById("loginEmail").value;
+      const contraseña = document.getElementById("loginContraseña").value;
+      const user = login(email, contraseña);
+      if (typeof user === "object") {
+        sessionStorage.setItem("usuario", JSON.stringify(user));
+        window.location.href = "transacciones.html";
+      } else {
+        mostrarAlerta(user, "danger");
+      }
+      // Limpiar los campos de inicio de sesión
+      document.getElementById("loginEmail").value = "";
+      document.getElementById("loginContraseña").value = "";
+    }
+
+    function registrarUsuario(nombre, email, contraseña) {
+      if (!email) {
+        return "El email no puede estar vacío";
+      }
+      if (!contraseña) {
+        return "La contraseña no puede estar vacía";
+      }
+      if (
+        contraseña.length < 8 ||
+        !/[A-Z]/.test(contraseña) ||
+        !/[0-9]/.test(contraseña) ||
+        !/[^A-Za-z0-9]/.test(contraseña)
+      ) {
+        return "La contraseña debe tener al menos 8 caracteres y contener una mayúscula, un número y un carácter especial";
+      }
+      if (usuarios.some((u) => u.email === email)) {
+        return "El email ya está registrado";
+      }
+      const nuevoUsuario = new Usuario(nombre, email, contraseña);
+      usuarios.push(nuevoUsuario);
+      return "Registro exitoso";
+    }
+
+    function login(email, contraseña) {
+      if (!email) {
+        return "El email no puede estar vacío";
+      }
+      if (!contraseña) {
+        return "La contraseña no puede estar vacía";
+      }
+      const user = usuarios.find(
+        (u) => u.email === email && u.contraseña === contraseña
+      );
+      return user ? user : "Email o contraseña incorrectos";
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
