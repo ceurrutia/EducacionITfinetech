@@ -7,7 +7,7 @@ function cargarTransacciones() {
     window.location.href = "index.html";
     return;
   }
-  document.getElementById("saldo").textContent = `$${usuario.saldo}`;
+  document.getElementById("saldo").textContent = `$${usuario.saldo.toFixed(2)}`;
   document.getElementById("nombreUsuario").textContent = `Bienvenido, ${
     usuario.nombre || "Usuario"
   }`;
@@ -62,11 +62,11 @@ function ingresarDinero() {
   const monto = parseFloat(document.getElementById("montoIngreso").value);
   if (monto > 0) {
     usuario.saldo += monto;
-    usuario.movimientos.push(`Ingreso: +$${monto}`);
+    usuario.movimientos.push(`Ingreso: +$${monto.toFixed(2)}`);
     sessionStorage.setItem("usuario", JSON.stringify(usuario));
-    document.getElementById("saldo").textContent = `$${usuario.saldo}`;
+    document.getElementById("saldo").textContent = `$${usuario.saldo.toFixed(2)}`;
     actualizarHistorial();
-    mostrarAlerta(`Se ingresaron $${monto} con éxito.`, "success");
+    mostrarAlerta(`Se ingresaron $${monto.toFixed(2)} con éxito.`, "success");
   } else {
     mostrarAlerta("Monto inválido.", "danger");
   }
@@ -87,21 +87,14 @@ function transferirDinero() {
     const destinatario = usuarios.find((u) => u.email === destinoEmail);
     if (destinatario) {
       usuario.saldo -= monto;
-      usuario.movimientos.push(
-        `Transferencia: -$${monto} a ${destinoEmail}`
-      );
+      usuario.movimientos.push(`Transferencia: -$${monto.toFixed(2)} a ${destinoEmail}`);
       destinatario.saldo += monto;
-      destinatario.movimientos.push(
-        `Transferencia: +$${monto} de ${usuario.email}`
-      );
+      destinatario.movimientos.push(`Transferencia: +$${monto.toFixed(2)} de ${usuario.email}`);
       sessionStorage.setItem("usuario", JSON.stringify(usuario));
       localStorage.setItem("usuarios", JSON.stringify(usuarios));
-      document.getElementById("saldo").textContent = `$${usuario.saldo}`;
+      document.getElementById("saldo").textContent = `$${usuario.saldo.toFixed(2)}`;
       actualizarHistorial();
-      mostrarAlerta(
-        `Se transfirieron $${monto} a ${destinoEmail} con éxito.`,
-        "success"
-      );
+      mostrarAlerta(`Se transfirieron $${monto.toFixed(2)} a ${destinoEmail} con éxito.`, "success");
     } else {
       mostrarAlerta("El destinatario no existe.", "danger");
     }
